@@ -1,47 +1,54 @@
 // proxy.js
+// tiny HTTP + WS forwarder -> Godot WS on 10000
+
 const http = require("http");
-const httpProxy = require("http-proxy");
-const { spawn } = require("child_process");
+const { WebSocketServer, WebSocket } = require("ws");
 
-const PORT = process.env.PORT || 10000;   // Render gives this
-const GODOT_WS_PORT = 10000;             // where Godot will listen
+const PORT = process.env.PORT || 10000;
+const GODOT_HOST = "127.0.0.1";
+const GODOT_PORT = 10000;
 
-// 1) start Godot in background
-console.log("[proxy] starting Godot via server.sh …");
-const godot = spawn("/app/server.sh", [], {
-  stdio: "inherit"
-});
-
-// if Godot dies, log it (Render will restart container anyway)
-godot.on("close", (code) => {
-  console.log("[proxy] Godot exited with code", code);
-});
-
-// 2) HTTP server (health + placeholder)
+// 1) HTTP for Render
 const server = http.createServer((req, res) => {
   if (req.url === "/healthz") {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("ok");
     return;
   }
-    // you can serve a simple text for GET /
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("Godot WS proxy");
 });
 
-// 3) WS → Godot
-const wsProxy = httpProxy.createProxyServer({
-  target: {
-    host: "127.0.0.1",
-    port: GODOT_WS_PORT
-  },
-  ws: true
-});
+// 2) WS proxy
+const wss = new WebSocketServer({ server });
 
-server.on("upgrade", (req, socket, head) => {
-  wsProxy.ws(req, socket, head);
+wss.on("connection", (client, req) => {
+  const backend = new WebSocket(`ws://${GODOT_HOST}:${GODOT_PORT}`);
+
+  // pipe client -> backend
+  client.on("message", (data) => {
+    if (backend.readyState === WebSocket.OPEN) {
+      backend.send(data);
+    }
+  });
+
+  // pipe backend -> client
+  backend.on("message", (data) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+
+  // close both ends together
+  const closeBoth = () => {
+    try { client.close(); } catch {}
+    try { backend.close(); } catch {}
+  };
+  client.on("close", closeBoth);
+  backend.on("close", closeBoth);
+  backend.on("error", closeBoth);
 });
 
 server.listen(PORT, () => {
-  console.log(`[proxy] listening on 0.0.0.0:${PORT}, proxying WS -> 127.0.0.1:${GODOT_WS_PORT}`);
+  console.log(`[proxy] listening on ${PORT}, forwarding WS -> ws://127.0.0.1:${GODOT_PORT}`);
 });

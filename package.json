@@ -4,8 +4,7 @@
   "main": "proxy.js",
   "license": "MIT",
   "dependencies": {
-    "ws": "^8.18.0",
-    "http-proxy": "^1.18.1"
+    "ws": "^8.18.0"
   },
   "scripts": {
     "start": "node proxy.js"
