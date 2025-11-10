@@ -1,0 +1,24 @@
+app = "godot-linux-server-01"
+primary_region = "sjc"
+
+[http_service]
+  internal_port = 10000       # proxy listens here
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 80
+    hard_limit = 100
+
+  # health check
+  [[http_service.checks]]
+    type = "http"
+    path = "/healthz"       # your proxy.js exposes this
+    interval = "30s"
+    timeout = "10s"          # give it a bit more than 2s
+    grace_period = "120s"    # let Godot+Node fully start before failing
+    method = "GET"
