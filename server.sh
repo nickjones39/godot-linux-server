@@ -9,7 +9,7 @@ curl -L -o godot.x86_64 "$GODOT_URL"
 chmod +x godot.x86_64
 
 # Render gives us the port in $PORT — pass it to Godot
-PORT_ENV=\${PORT:-8080}
+PORT_ENV=${PORT:-8080}
 
-echo "[server.sh] starting Godot on port \$PORT_ENV..."
-./godot.x86_64 --headless --main-pack server.pck -- --port=\$PORT_ENV
+echo "[server.sh] starting Godot on port $PORT_ENV..."
+./godot.x86_64 --headless --main-pack server.pck -- --port=$PORT_ENV
