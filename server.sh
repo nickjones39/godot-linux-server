@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-# Godot 4.5.1 Linux x86_64 from the official mirror
-GODOT_URL="https://downloads.tuxfamily.org/godotengine/4.5.1/Godot_v4.5.1-stable_linux.x86_64.zip"
+# change to your real tag and filename
+ASSET_URL="https://github.com/nickjones39/godot-linux-server/releases/download/binary/Godot_v4.5.1-stable_linux.x86_64.zip"
 
-echo "[server.sh] downloading Godot from $GODOT_URL ..."
-curl -L -o godot.zip "$GODOT_URL"
+echo "[server.sh] downloading Godot..."
+curl -L -o godot.zip "$ASSET_URL"
 
-echo "[server.sh] unpacking..."
+echo "[server.sh] unzipping..."
 unzip -o godot.zip
-# after unzip you usually get: Godot_v4.5.1-stable_linux.x86_64
+
+# this is the name inside the zip
 chmod +x Godot_v4.5.1-stable_linux.x86_64
 
-# Render gives us the port in $PORT — pass it through
 PORT_ENV=${PORT:-8080}
-echo "[server.sh] starting Godot on port $PORT_ENV ..."
-
-# run headless with your packed game
+echo "[server.sh] starting Godot on port $PORT_ENV..."
 ./Godot_v4.5.1-stable_linux.x86_64 --headless --main-pack server.pck -- --port=$PORT_ENV
