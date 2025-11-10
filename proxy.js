@@ -22,8 +22,7 @@ const server = http.createServer((req, res) => {
 // 2) WS proxy: every incoming WS → make a WS to Godot, then pipe both ways
 const wss = new WebSocketServer({ server });
 
-wss.on("connection", (client, req) => {
-  // try to connect to Godot
+wss.on("connection", (client) => {
   const backendUrl = `ws://${GODOT_HOST}:${GODOT_PORT}`;
   const backend = new WebSocket(backendUrl);
 
@@ -43,6 +42,10 @@ wss.on("connection", (client, req) => {
     }
   });
 
+  backend.on("open", () => {
+    console.log("[proxy] backend WS connected");
+  });
+
   // if Godot isn't up yet, close client cleanly
   backend.on("error", (err) => {
     console.warn("[proxy] backend WS error:", err.message);
@@ -52,20 +55,16 @@ wss.on("connection", (client, req) => {
   });
 
   const closeBoth = () => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.close();
-    }
-    if (backend.readyState === WebSocket.OPEN) {
-      backend.close();
-    }
+    if (client.readyState === WebSocket.OPEN) client.close();
+    if (backend.readyState === WebSocket.OPEN) backend.close();
   };
 
   client.on("close", closeBoth);
   backend.on("close", closeBoth);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(
-    `[proxy] listening on ${PORT}, forwarding WS -> ws://${GODOT_HOST}:${GODOT_PORT}`
+    `[proxy] listening on 0.0.0.0:${PORT}, forwarding WS -> ws://${GODOT_HOST}:${GODOT_PORT}`
   );
 });
