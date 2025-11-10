@@ -1,0 +1,71 @@
+{
+  "name": "godot-linux-server-proxy",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "godot-linux-server-proxy",
+      "version": "1.0.0",
+      "license": "UNLICENSED",
+      "dependencies": {
+        "http-proxy": "1.18.1"
+      }
+    },
+    "node_modules/eventemitter3": {
+      "version": "4.0.7",
+      "resolved": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz",
+      "integrity": "sha512-8guHBZCwFJqWQvQvQ6PvxI5ijXG8XYr4vU6qVqg1FdO3abhENlJ8gJ5QoflvetkL1QKkR++xYt5wFQpEY5P6sg=="
+    },
+    "node_modules/follow-redirects": {
+      "version": "1.15.6",
+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.6.tgz",
+      "integrity": "sha512-wWN62YITEaOpSK584E0kT9QbEH6L/cxqM5xPeU1FhUZVtMMXKpCiKJ1dB9CTxU9QqYtDMcZf5lQ0PpE5D9KQJg=="
+    },
+    "node_modules/http-proxy": {
+      "version": "1.18.1",
+      "resolved": "https://registry.npmjs.org/http-proxy/-/http-proxy-1.18.1.tgz",
+      "integrity": "sha512-7mz/ktBfZXhRJz9zBv4Q3iDrb6jx9kDS7i9P+8d1NcQNt2e0JrWUIXUjHK5p3G6G6kB1lGZFOD4YdQZjzvS5xg==",
+      "dependencies": {
+        "eventemitter3": "^4.0.0",
+        "follow-redirects": "^1.0.0",
+        "requires-port": "^1.0.0"
+      },
+      "engines": {
+        "node": ">=8.0.0"
+      }
+    },
+    "node_modules/requires-port": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz",
+      "integrity": "sha512-KiEMj2ku6m3LK6iC5JQ1twyQ8AmkC5mLFctLnH4Tw1JHp4H9G6FX8Z4X4bo5aYdN07dVEz7p9kJhpKjvj2ur2w=="
+    }
+  },
+  "dependencies": {
+    "http-proxy": {
+      "version": "1.18.1",
+      "resolved": "https://registry.npmjs.org/http-proxy/-/http-proxy-1.18.1.tgz",
+      "integrity": "sha512-7mz/ktBfZXhRJz9zBv4Q3iDrb6jx9kDS7i9P+8d1NcQNt2e0JrWUIXUjHK5p3G6G6kB1lGZFOD4YdQZjzvS5xg==",
+      "requires": {
+        "eventemitter3": "^4.0.0",
+        "follow-redirects": "^1.0.0",
+        "requires-port": "^1.0.0"
+      }
+    },
+    "eventemitter3": {
+      "version": "4.0.7",
+      "resolved": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz",
+      "integrity": "sha512-8guHBZCwFJqWQvQvQ6PvxI5ijXG8XYr4vU6qVqg1FdO3abhENlJ8gJ5QoflvetkL1QKkR++xYt5wFQpEY5P6sg=="
+    },
+    "follow-redirects": {
+      "version": "1.15.6",
+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.6.tgz",
+      "integrity": "sha512-wWN62YITEaOpSK584E0kT9QbEH6L/cxqM5xPeU1FhUZVtMMXKpCiKJ1dB9CTxU9QqYtDMcZf5lQ0PpE5D9KQJg=="
+    },
+    "requires-port": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz",
+      "integrity": "sha512-KiEMj2ku6m3LK6iC5JQ1twyQ8AmkC5mLFctLnH4Tw1JHp4H9G6FX8Z4X4bo5aYdN07dVEz7p9kJhpKjvj2ur2w=="
+    }
+  }
+}

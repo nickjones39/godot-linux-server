@@ -1,0 +1,13 @@
+{
+  "name": "godot-ws-proxy",
+  "version": "1.0.0",
+  "main": "proxy.js",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.0",
+    "http-proxy": "^1.18.1"
+  },
+  "scripts": {
+    "start": "node proxy.js"
+  }
+}
