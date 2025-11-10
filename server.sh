@@ -6,24 +6,42 @@ GODOT_BIN="Godot_v4.5.1-stable_linux.x86_64"
 
 echo "[server.sh] starting…"
 
-# download Godot if we don't have it yet
+# ─────────────────────────────────────────
+# 1) download Godot once
+# ─────────────────────────────────────────
 if [ ! -f "$GODOT_BIN" ]; then
   echo "[server.sh] downloading Godot..."
   curl -L -o godot.zip "$ASSET_URL"
   echo "[server.sh] unzipping..."
   unzip -o godot.zip
   chmod +x "$GODOT_BIN"
+else
+  echo "[server.sh] Godot already present, skipping download."
 fi
 
-# 1) start Godot headless on the same port the container will proxy to
+# Render gives us the public port
 PORT_ENV=${PORT:-10000}
-echo "[server.sh] starting Godot on port $PORT_ENV..."
-./"$GODOT_BIN" --headless --main-pack server.pck -- --port="$PORT_ENV" &
+
+# ─────────────────────────────────────────
+# 2) start Godot headless on the *internal* WS port 10000
+#    (this is the port your Godot project reads via --port=10000)
+# ─────────────────────────────────────────
+echo "[server.sh] starting Godot on port 10000..."
+./"$GODOT_BIN" --headless --main-pack server.pck -- --port=10000 &
 GODOT_PID=$!
 
-# 2) start the HTTP+WS proxy on $PORT (same value) so Render sees an HTTP server
-echo "[server.sh] starting node proxy on port $PORT_ENV..."
-node /app/proxy.js &
+# give Godot a moment to bind 10000 so the proxy doesn’t race it
+sleep 1
 
-# 3) wait for godot so container stays alive
+# ─────────────────────────────────────────
+# 3) start Node proxy on the Render port → forward to 10000
+# ─────────────────────────────────────────
+echo "[server.sh] starting node proxy on port $PORT_ENV..."
+PORT=$PORT_ENV TARGET_PORT=10000 node /app/proxy.js &
+PROXY_PID=$!
+
+# ─────────────────────────────────────────
+# 4) wait on both — if either dies, we die, so Render restarts us
+# ─────────────────────────────────────────
 wait $GODOT_PID
+wait $PROXY_PID

@@ -1,7 +1,8 @@
 # Dockerfile
 FROM node:22-slim
 
-# curl + unzip + CA bundle + fontconfig for Godot
+# we need curl + unzip to fetch Godot, CA certs so curl works,
+# and libfontconfig1 so the Godot binary doesn’t complain
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
      curl \
@@ -12,18 +13,22 @@ RUN apt-get update \
 
 WORKDIR /app
 
-# app files
+# your Godot pack + scripts
 COPY server.pck /app/server.pck
 COPY server.sh /app/server.sh
 COPY proxy.js /app/proxy.js
 COPY package.json /app/package.json
 
-# install what package.json says (you had just "ws")
+# install node deps (you have "ws" in package.json)
 RUN npm install --omit=dev
 
-# make script runnable
+# make the launcher executable
 RUN chmod +x /app/server.sh
 
+# Godot listens on 10000 internally;
+# Render will hit the Node proxy on $PORT,
+# but exposing 10000 is fine for local/docker runs
 EXPOSE 10000
 
+# start everything
 CMD ["./server.sh"]
